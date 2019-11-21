@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DLL_injecter_WinAPI", "DLL_injecter_WinAPI\DLL_injecter_WinAPI.vcxproj", "{E9A22327-850F-494D-AFE9-DA322DC531B5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Injectable_DLL", "Injectable_DLL\Injectable_DLL.vcxproj", "{8245FC90-169C-47A8-9780-781EF9772AD9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9A22327-850F-494D-AFE9-DA322DC531B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E9A22327-850F-494D-AFE9-DA322DC531B5}.Debug|Win32.Build.0 = Debug|Win32
+		{E9A22327-850F-494D-AFE9-DA322DC531B5}.Release|Win32.ActiveCfg = Release|Win32
+		{E9A22327-850F-494D-AFE9-DA322DC531B5}.Release|Win32.Build.0 = Release|Win32
+		{8245FC90-169C-47A8-9780-781EF9772AD9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8245FC90-169C-47A8-9780-781EF9772AD9}.Debug|Win32.Build.0 = Debug|Win32
+		{8245FC90-169C-47A8-9780-781EF9772AD9}.Release|Win32.ActiveCfg = Release|Win32
+		{8245FC90-169C-47A8-9780-781EF9772AD9}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

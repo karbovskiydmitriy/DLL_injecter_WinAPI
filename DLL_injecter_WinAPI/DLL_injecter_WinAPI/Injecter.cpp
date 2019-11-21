@@ -1,13 +1,11 @@
 #include "Injecter.h"
 
 const DWORD windowStyle = WS_OVERLAPPED & !WS_SIZEBOX | WS_SYSMENU;
-RECT clientRect = {0, 0, 500, 500};
-HWND hMainWindow, hProcessNameEdit, hLibraryNameEdit, hFunctionNameEdit, hInjectButton;
-HFONT hEditFont, hButtonFont;
 const DWORD processNameEditStyle = WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_UPPERCASE;
 const DWORD libraryNameEditStyle = WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_UPPERCASE;
 const DWORD functionNameEditStyle = WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_UPPERCASE;
 const DWORD injectButtonStyle = WS_CHILD | WS_VISIBLE | WS_BORDER | BS_CENTER;
+const DWORD fileAccessAttributes = FILE_READ_DATA;
 const wchar_t *const editClassName = L"EDIT";
 const wchar_t *const buttonClassName = L"BUTTON";
 const wchar_t *const processNameEditText = L"Enter process name";
@@ -16,8 +14,22 @@ const wchar_t *const functionNameEditText = L"Enter function name";
 const wchar_t *const injectButtonText = L"INJECT!";
 const wchar_t *const editFontName = L"CONSOLAS";
 const wchar_t *const buttonFontName = L"CONSOLAS";
+const wchar_t *const incorrectInputString = L"Incorrect input!";
+const wchar_t *const enterProcessNameString = L"Enter process name!";
+const wchar_t *const enterLibraryNameString = L"Enter library name!";
+const wchar_t *const enterFunctionNameString = L"Enter function name!";
+const wchar_t *const wrongProcessNameString = L"Incorrect process name!";
+const wchar_t *const wrongLibraryNameString = L"Incorrect library name!";
+const wchar_t *const wrongFunctionNameString = L"Incorrect function name!";
 const wchar_t *const caption = L"DLL-injecter";
 const wchar_t *const mainClassName = L"MainClass";
+RECT clientRect = {0, 0, 500, 500};
+HWND hMainWindow, hProcessNameEdit, hLibraryNameEdit, hFunctionNameEdit, hInjectButton;
+HFONT hEditFont, hButtonFont;
+HANDLE hLibraryFile;
+DWORD *processIds;
+HANDLE processes[MAX_PROCESSES_COUNT];
+wchar_t *fileName, *functionName, *processName, *processNames[MAX_PROCESSES_COUNT];
 
 WNDCLASSEXW WndClassEx = {sizeof(WNDCLASSEX), 0, (WNDPROC)WindowProc, 0, 0, 0, 0, 0, 0, 0, (LPCWSTR)mainClassName, 0};
 
@@ -46,6 +58,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SendMessage(hFunctionNameEdit, WM_SETFONT, (WPARAM)hEditFont, true);
 	SendMessage(hInjectButton, WM_SETFONT, (WPARAM)hButtonFont, true);
 	
+	fileName = (wchar_t *)calloc(MAX_PATH, sizeof(wchar_t));
+	functionName = (wchar_t *)calloc(MAX_PATH, sizeof(wchar_t));
+	processName = (wchar_t *)calloc(MAX_PATH, sizeof(wchar_t));
+
 	MSG msg;
 	while (GetMessageW(&msg, 0, 0, 0)) {
 		TranslateMessage(&msg);
@@ -67,6 +83,31 @@ LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	case WM_COMMAND:
+		if ((HWND)lParam != hInjectButton) {
+			break;
+		}
+		memset(fileName, 0,  MAX_PATH);
+		memset(functionName, 0,  MAX_PATH);
+		memset(processName, 0,  MAX_PATH);
+		if (!GetWindowTextW(hProcessNameEdit, processName, MAX_PATH)) {
+			MessageBox(0, enterProcessNameString, incorrectInputString, MB_ICONERROR);
+			return 0;
+		}
+		if (!GetWindowTextW(hLibraryNameEdit, fileName, MAX_PATH)) {
+			MessageBox(0, enterLibraryNameString, incorrectInputString, MB_ICONERROR);
+			return 0;
+		}
+		if (!GetWindowTextW(hFunctionNameEdit, functionName, MAX_PATH)) {
+			MessageBox(0, enterFunctionNameString, incorrectInputString, MB_ICONERROR);
+			return 0;
+		}
+		hLibraryFile = CreateFileW(fileName, fileAccessAttributes, 0, (SECURITY_ATTRIBUTES *)NULL, OPEN_EXISTING, 0, (HANDLE)NULL);
+		if (GetLastError()) {
+			MessageBox(0, wrongLibraryNameString, incorrectInputString, MB_ICONERROR);
+			return 0;
+		}
+		CloseHandle(hLibraryFile);
+
 		return 0;
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE) {

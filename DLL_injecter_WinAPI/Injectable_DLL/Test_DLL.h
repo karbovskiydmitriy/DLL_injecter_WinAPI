@@ -1,3 +1,4 @@
 #include <Windows.h>
 
-BOOL __declspec(dllexport) WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
+BOOL WINAPI DllMain(HINSTANCE, DWORD, LPVOID);
+DWORD __declspec(dllexport) __stdcall MessageProc(void *);

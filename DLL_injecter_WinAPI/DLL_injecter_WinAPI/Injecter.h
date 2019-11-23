@@ -7,4 +7,6 @@
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 LRESULT WindowProc(HWND, UINT, WPARAM, LPARAM);
+void Inject();
 HANDLE GetProcessByName(wchar_t *processName);
+void Error(const wchar_t *text, const wchar_t *caption);

@@ -95,7 +95,22 @@ LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if ((HWND)lParam != hInjectButton) {
 			break;
 		}
-		
+		memset(fileName, 0, MAX_PATH * sizeof(wchar_t));
+		memset(functionName, 0, MAX_PATH * sizeof(char));
+		memset(processName, 0, MAX_PATH * sizeof(wchar_t));
+		if (!GetWindowTextW(hProcessNameEdit, processName, MAX_PATH)) {
+			Error(enterProcessNameString, incorrectInputString);
+			return 0;
+		}
+		if (!GetWindowTextW(hLibraryNameEdit, fileName, MAX_PATH)) {
+			Error(enterLibraryNameString, incorrectInputString);
+			return 0;
+		}
+		if (!GetWindowTextA(hFunctionNameEdit, functionName, MAX_PATH)) {
+			Error(enterFunctionNameString, incorrectInputString);
+			return 0;
+		}
+		Inject(fileName, processName, functionName);
 		return 0;
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE) {
@@ -108,7 +123,7 @@ LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 }
 
-void Inject()
+void Inject(wchar_t *fileName, wchar_t *processName, char *functionName)
 {
 
 	DWORD remoteThreadExitCode;
@@ -116,21 +131,6 @@ void Inject()
 	HMODULE hTempLibrary;
 	void *functionAddress, *functionOffset, *fileNameRemoteAddress;
 
-	memset(fileName, 0, MAX_PATH * sizeof(wchar_t));
-	memset(functionName, 0, MAX_PATH * sizeof(wchar_t));
-	memset(processName, 0, MAX_PATH * sizeof(wchar_t));
-	if (!GetWindowTextW(hProcessNameEdit, processName, MAX_PATH)) {
-		Error(enterProcessNameString, incorrectInputString);
-		return;
-	}
-	if (!GetWindowTextW(hLibraryNameEdit, fileName, MAX_PATH)) {
-		Error(enterLibraryNameString, incorrectInputString);
-		return;
-	}
-	if (!GetWindowTextA(hFunctionNameEdit, functionName, MAX_PATH)) {
-		Error(enterFunctionNameString, incorrectInputString);
-		return;
-	}
 	hLibraryFile = CreateFileW(fileName, fileAccessAttributes, 0, (SECURITY_ATTRIBUTES *)NULL, OPEN_EXISTING, 0, (HANDLE)NULL);
 	if (GetLastError()) {
 		Error(wrongLibraryNameString, incorrectInputString);

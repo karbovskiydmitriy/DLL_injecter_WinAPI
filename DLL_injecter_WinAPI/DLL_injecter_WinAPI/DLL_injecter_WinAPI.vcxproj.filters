@@ -20,7 +20,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Injecter.cpp">
+    <ClCompile Include="Injecter.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>

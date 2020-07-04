@@ -98,7 +98,7 @@ void Inject(wchar_t *fileName, wchar_t *processName, char *functionName)
 	HMODULE hTempLibrary;
 	void *functionAddress, *functionOffset, *fileNameRemoteAddress;
 
-	hLibraryFile = CreateFileW(fileName, FILA_ACCESS_ATTRIBUTES, 0, (SECURITY_ATTRIBUTES *)null, OPEN_EXISTING, 0, (HANDLE)null);
+	hLibraryFile = CreateFileW(fileName, FILE_ACCESS_ATTRIBUTES, 0, (SECURITY_ATTRIBUTES *)null, OPEN_EXISTING, 0, (HANDLE)null);
 	if (GetLastError()) {
 		Error(WRONG_LIBRARY_NAME_STRING, INCORRECT_INPUT_STRING);
 		return;

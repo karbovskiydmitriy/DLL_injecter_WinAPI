@@ -193,7 +193,6 @@ HANDLE GetProcessByName(wchar_t *processName)
 	free(processIds);
 
 	return 0;
-
 }
 
 void Error(const wchar_t *text, const wchar_t *caption)

@@ -147,7 +147,6 @@ void Inject(wchar_t *fileName, wchar_t *processName, char *functionName)
 HANDLE GetProcessByName(wchar_t *processName)
 {
 	int i;
-	int index;
 	int count;
 	wchar_t *openedProcessName;
 	HANDLE hOpenedProcess;

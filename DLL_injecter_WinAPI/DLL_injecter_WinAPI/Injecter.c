@@ -162,6 +162,7 @@ HANDLE GetProcessByName(wchar_t *processName)
 {
 	int i;
 	int count;
+	int index;
 	wchar_t *openedProcessName;
 	HANDLE hOpenedProcess;
 	HMODULE processMainModule;

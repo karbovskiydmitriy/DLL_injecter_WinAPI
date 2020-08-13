@@ -59,6 +59,7 @@ LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch(uMsg) {
 	case WM_DESTROY:
 		PostQuitMessage(0);
+			
 		return 0;
 	case WM_COMMAND:
 		if ((HWND)lParam != hInjectButton) {
@@ -69,21 +70,26 @@ LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		memset(processName, 0, MAX_PATH * sizeof(wchar_t));
 		if (!GetWindowTextW(hProcessNameEdit, processName, MAX_PATH)) {
 			Error(ENTER_PROCESS_NAME_STRING, INCORRECT_INPUT_STRING);
+			
 			return 0;
 		}
 		if (!GetWindowTextW(hLibraryNameEdit, fileName, MAX_PATH)) {
 			Error(ENTER_LIBRARY_NAME_STRING, INCORRECT_INPUT_STRING);
+			
 			return 0;
 		}
 		if (!GetWindowTextA(hFunctionNameEdit, functionName, MAX_PATH)) {
 			Error(ENTER_FUNCTION_NAME_STRING, INCORRECT_INPUT_STRING);
+			
 			return 0;
 		}
 		Inject(fileName, processName, functionName);
+			
 		return 0;
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE) {
 			PostQuitMessage(0);
+			
 			return 0;
 		}
 	}
@@ -101,34 +107,41 @@ void Inject(wchar_t *fileName, wchar_t *processName, char *functionName)
 	hLibraryFile = CreateFileW(fileName, FILE_ACCESS_ATTRIBUTES, 0, (SECURITY_ATTRIBUTES *)null, OPEN_EXISTING, 0, (HANDLE)null);
 	if (GetLastError()) {
 		Error(WRONG_LIBRARY_NAME_STRING, INCORRECT_INPUT_STRING);
+		
 		return;
 	}
 	CloseHandle(hLibraryFile);
 	if (!(hTempLibrary = LoadLibraryW(fileName))) {
 		Error(LIBRARY_ANALYZE_FAIL_STRING, ERROR_STRING);
+		
 		return;
 	}
 	if (!(functionOffset = (void *)GetProcAddress(hTempLibrary, functionName))) {
 		Error(WRONG_FUNCTION_NAME_STRING, INCORRECT_INPUT_STRING);
+		
 		return;
 	}
 	functionOffset = (void *)((long)functionOffset - (long)hTempLibrary);
 	FreeLibrary(hTempLibrary);
 	if (!(hRemoteProcess = GetProcessByName(processName))) {
 		Error(WRONG_PROCESS_NAME_STRING, INCORRECT_INPUT_STRING);
+		
 		return;
 	}
 	if(!(fileNameRemoteAddress = VirtualAllocEx(hRemoteProcess, (void *)null, wcslen(fileName) * sizeof(wchar_t), MEM_COMMIT, PROTECT_FLAGS))) {
 		Error(FAIL_ALLOCATIONG_MEMORY_STRING, ERROR_STRING);
+		
 		return;
 	}
 	if (!(WriteProcessMemory(hRemoteProcess, fileNameRemoteAddress, fileName, wcslen(fileName) * sizeof(wchar_t), (SIZE_T *)null))) {
 		Error(FAIL_COPYING_MEMORY_STRING, ERROR_STRING);
+		
 		return;
 	}
 	functionAddress = GetProcAddress(hKernel32, LOAD_LIBRARY_STRING);
 	if (!(hRemoteThread = CreateRemoteThread(hRemoteProcess, (SECURITY_ATTRIBUTES *)null, 4096, (LPTHREAD_START_ROUTINE)functionAddress, fileNameRemoteAddress, 0, (DWORD *)null))) {
 		Error(LIBRARY_LOADING_FAIL_STRING, ERROR_STRING);
+		
 		return;
 	}
 	WaitForSingleObject(hRemoteThread, INFINITE);
@@ -137,6 +150,7 @@ void Inject(wchar_t *fileName, wchar_t *processName, char *functionName)
 	functionAddress = (void *)((long)remoteThreadExitCode + (long)functionOffset);
 	if (!(hRemoteProcess = CreateRemoteThread(hRemoteProcess, (SECURITY_ATTRIBUTES *)null, 4096, (LPTHREAD_START_ROUTINE)functionAddress, (void *)null, 0, (DWORD *)null))) {
 		Error(FAIL_STARTING_REMOTE_PROCEDURE_STRING, INCORRECT_INPUT_STRING);
+		
 		return;
 	}
 	WaitForSingleObject(hRemoteThread, INFINITE);
@@ -155,6 +169,7 @@ HANDLE GetProcessByName(wchar_t *processName)
 	DWORD cbNeeded, *processIds = (DWORD *)calloc(PROCESSES_BUFFER_SIZE, sizeof(DWORD));
 	if (!EnumProcesses(processIds, (DWORD)PROCESSES_BUFFER_SIZE, &cbNeeded)) {
 		free(processIds);
+		
 		return 0;
 	}
 	count = cbNeeded / sizeof(DWORD);
@@ -167,6 +182,7 @@ HANDLE GetProcessByName(wchar_t *processName)
 					if (!wcscmp(processName, openedProcessName)) {
 						free(openedProcessName);
 						free(processIds);
+						
 						return hOpenedProcess;
 					}
 				}

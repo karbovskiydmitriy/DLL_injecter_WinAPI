@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __TEST_DLL_H__
 #define __TEST_DLL_H__
 

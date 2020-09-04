@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __INJECTER_H__
 #define __INJECTER_H__
 
